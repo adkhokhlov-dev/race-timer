@@ -107,6 +107,7 @@
         <input type="number" x-model="number" required placeholder="Номер" />
         <input type="text" x-model="name" placeholder="Участник" />
         <button>Добавить</button>
+        <button @click="reset()">Сброс</button>
       </div>
     </form>
 
@@ -148,7 +149,7 @@
           "Yellow 20": "#f0c33c", "Yellow 30": "#dba617", "Yellow 40": "#bd8600",
           "Yellow 50": "#996800", "Yellow 60": "#755100", "Yellow 70": "#614200",
           "Yellow 80": "#4a3200", "Yellow 90": "#362400", "Yellow 100": "#211600"
-        }).reverse().slice(5),
+        }).reverse().slice(4),
         tzOffset: new Date().getTimezoneOffset() * 60_000,
         settings: { interval: undefined },
         start: "11:00",
@@ -161,26 +162,29 @@
 
         init: function () {
           this.participants = this.participantsSorted = [
-            "Первый",
-            "Второй",
-            "Третий",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            ["Балчугова", 4],
+            ["Хохлова", 2],
+            ["Шведова", 3],
+            // ["Загвоздин", 3],
+            // ["Хисматулин", 3],
+            // ["Фрол", 3],
+            // ["Барышников", 3],
+            // ["Богданов", 3],
+            // ["Строгалев", 3],
+            // ["Шведова", 3],
 
-          ].map((name, id) => ({
-            id: id + 1,
+          ].map(([name, id], i) => ({
+            id: id ?? i + 1,
             name,
             laps: [],
-          }));
+          })).sort((p1, p2) => p1.id - p2.id);
           // this.participants.push({
           //   id: 77,
           //   laps: [],
           // });
+        },
+        reset: function () {
+          this.participants = this.participantsSorted = [];
         },
         saveSettings: function () {
           console.log(this.start);
