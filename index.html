@@ -61,6 +61,19 @@
           transition: all 0.3s;
         }
       }
+
+      select {
+        width: 200px;
+        padding: 4px 15px;
+        /* Adds space inside */
+        font-size: 16px;
+        /* border: 2px solid #ccc; */
+        /* border-radius: 5px; */
+        /* Rounded corners */
+        background-color: #f9f9f9;
+        color: #333;
+        cursor: pointer;
+      }
     }
 
     .row {
@@ -99,8 +112,22 @@
               placeholder="Время старта"
             /> </label
           ><label> -->
-        Интервал
-        <input type="number" x-model="interval" required placeholder="Начальное отставание в с" style="width: 5em" />
+
+        <label x-data="{ selectedOption: 'option1', 
+         options: [ 
+            'option1',
+            'option2', 
+            'option3'
+         ]}">Гонка<select name="my_option" x-model="selectedOption" class="">
+            <template x-for="option in options" :key="option">
+              <option :value="option" x-text="option"></option>
+            </template>
+          </select></label>
+        <button @click="addParticipant1()">+</button>
+
+        <label>
+          Интервал
+          <input type="number" x-model="interval" required placeholder="Начальное отставание в с" style="width: 5em" />
         </label>
       </div>
       <div class="participant_add">
@@ -108,6 +135,7 @@
         <input type="text" x-model="name" placeholder="Участник" />
         <button>Добавить</button>
         <!-- <button @click="reset()">Сброс</button> -->
+
       </div>
     </form>
 
@@ -201,6 +229,10 @@
           }
           this.number = NaN;
           this.name = "";
+        },
+        addParticipant1() {
+          const res = prompt('Номер и гонщик');
+          console.log(res)
         },
         check(id) {
           const participant = this.getById(id);
