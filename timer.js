@@ -1,5 +1,4 @@
 // const TS_OFFSET= new Date().getTimezoneOffset() * 60_000;
-const NEW_RACE = "++добавить++";
 const DEFAULT_INTERVAL = 15;
 const STORAGE_KEY = "config";
 
@@ -41,7 +40,10 @@ function timer() {
 
       if (config?.races && config.races.length) {
         this.races = config.races.map((v) => Race.parse(v));
-        if (this.races[0]) this.changeRace(this.races[0]);
+        this.selectedRace = config.selectedRace ?? null;
+        setTimeout(() => {
+          this.changeRace(this.races.find((v) => v.name === this.selectedRace));
+        }, 1);
       }
       // this.fetchRaces();
       // this.participants = this.participantsSorted = [
@@ -67,45 +69,16 @@ function timer() {
       //   laps: [],
       // });
     },
-    async fetchRaces() {
-      // Simulate an API call
-      const response = await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve([
-            new Race("гонка 1", 3, [
-              ["Балчугова", 4],
-              ["Хохлова", 2],
-              ["Шведова", 3],
-            ]),
-            new Race("гонка 2"),
-            new Race(NEW_RACE),
-          ]);
-        }, 500)
-      );
-
-      this.races = response;
-      if (this.races[0].name !== NEW_RACE) {
-        this.changeRace(this.races[0]);
-      }
-      // this.selectedOption = 2; // Set a default selected value after options are loaded
-    },
 
     onRaceChange: function (value) {
-      console.log(value);
-      if (value === NEW_RACE) {
-        // this.selectedOption = undefined;
-        this.addRace();
-      } else {
-        const race = this.races.find((v) => v.name === value);
-        this.changeRace(race);
-      }
+      const race = this.races.find((v) => v.name === value);
+      this.changeRace(race);
     },
 
     addRace: function () {
       const raceName = prompt("Название гонки");
       if (raceName) {
         const newRace = new Race(raceName);
-        // this.races.splice(this.races.length - 1, 0, newRace);
         this.races.push(newRace);
         setTimeout(() => {
           this.selectedRace = raceName;
@@ -125,15 +98,18 @@ function timer() {
       }
     },
 
-    saveRace: function () {
+    saveRace: function (endAction = false) {
       const race = this.races.find((v) => v.name === this.selectedRace);
       if (race) {
         race.interval = this.interval;
         race.laps = this.laps;
         race.racers = this.participants;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ races: this.races }));
-      this.editMode = false;
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ races: this.races, selectedRace: this.selectedRace })
+      );
+      if (endAction) this.editMode = false;
     },
 
     changeRace(race) {
@@ -141,6 +117,13 @@ function timer() {
       this.interval = race?.interval ?? DEFAULT_INTERVAL;
       this.laps = race?.laps ?? [];
       this.setParticipants(race?.racers ?? []);
+      this.saveRace();
+    },
+
+    resetRace: function () {
+      this.laps = [];
+      this.participants.forEach((p) => (p.laps = []));
+      this.saveRace();
     },
 
     setParticipants(participants) {
@@ -151,19 +134,6 @@ function timer() {
           laps,
         }))
         .sort((p1, p2) => p1.id - p2.id);
-    },
-    addParticipant(event) {
-      //todo remove
-      event.preventDefault();
-      if (this.number) {
-        this.participants.push({
-          id: this.number,
-          name: this.name,
-          laps: [],
-        });
-      }
-      this.number = NaN;
-      this.name = "";
     },
     addParticipants() {
       const res = prompt("Список номеров и гонщиков");
@@ -179,10 +149,10 @@ function timer() {
       // const participants = racers.map((v) => v.toCortege());
       // console.log(participants);
       this.setParticipants([...this.participants, ...racers]);
+      this.saveRace();
     },
-    resetRace: function () {
-      this.laps = [];
-      this.participants.forEach((p) => (p.laps = []));
+    deleteRacer(number) {
+      this.participants = this.participants.filter((v) => v.id != number);
       this.saveRace();
     },
 

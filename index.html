@@ -17,7 +17,7 @@
 
 <body>
   <div x-data="timer()" x-init="init()" class="app">
-    <form class="settings" @submit="addParticipant($event)">
+    <div class="settings">
       <div>
         <!-- <label>
             Старт
@@ -53,45 +53,48 @@
         <input type="text" x-model="name" placeholder="Участник" />
         <button>Добавить</button>
       </div> -->
-    </form>
+      </form>
 
 
-    <div class="header row">
-      <div>Участник</div>
-      <!-- <div>Круг</div> -->
-      <template x-for="l in laps">
-        <div><span>этап </span><span x-text="l"></span></div>
-      </template>
-    </div>
-
-    <template x-for="p in participants" :key="p.id">
-      <div @click="check(p.id)" class="row">
-        <div>
-          <b x-text="p.id"></b>
-          <span x-text="p.name"></span>
-        </div>
-        <!-- <span x-text="p.laps.length"></span> -->
-        <template x-for="lap in p.laps">
-          <div :style="getColor(lap.position);">
-            <div>место:<span x-text="lap.position"></span></div>
-            <template x-for="delay in lap.delays">
-              <div>
-                <!-- <span>отставание: </span> --><span x-text="delay"></span>
-              </div>
-              <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
-            </template>
-          </div>
+      <div class="header row">
+        <div>Участник</div>
+        <!-- <div>Круг</div> -->
+        <template x-for="l in laps">
+          <div><span>этап </span><span x-text="l"></span></div>
         </template>
       </div>
-    </template>
 
-    <template x-if="editMode">
-      <div class="button-group">
-        <button @click="addParticipants()">+ добавить участников</button>
-        <button @click="saveRace()">Сохранить</button>
-        <button @click="deleteRace()">удалить</button>
-      </div>
-  </div>
+      <template x-for="p in participants" :key="p.id">
+        <div @click="check(p.id)" class="row">
+          <div>
+            <template x-if="editMode">
+              <button @click="deleteRacer(p.id)">-</button>
+            </template>
+            <b x-text="p.id"></b>
+            <span x-text="p.name"></span>
+          </div>
+          <!-- <span x-text="p.laps.length"></span> -->
+          <template x-for="lap in p.laps">
+            <div :style="getColor(lap.position);">
+              <div>место:<span x-text="lap.position"></span></div>
+              <template x-for="delay in lap.delays">
+                <div>
+                  <!-- <span>отставание: </span> --><span x-text="delay"></span>
+                </div>
+                <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <template x-if="editMode">
+        <div class="button-group">
+          <button @click="addParticipants()">+ добавить участников</button>
+          <button @click="saveRace(true)">Сохранить</button>
+          <button @click="deleteRace()">удалить</button>
+        </div>
+    </div>
   </div>
 </body>
 

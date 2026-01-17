@@ -83,6 +83,10 @@
    &.header {
      background-color: gainsboro;
    }
+
+   >*:first-child {
+     word-break: break-all;
+   }
  }
 
  .button-group {
