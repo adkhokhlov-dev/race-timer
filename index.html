@@ -7,6 +7,8 @@
   <title>&#9955; Timer</title>
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon" /> -->
   <!-- <link rel="icon" href="data:image/svg+xml;utf8,😊" /> -->
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit" />
 
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
@@ -27,28 +29,24 @@
             /> </label
           ><label> -->
 
-        <label>Гонка
-          <select x-model="selectedRace" @change="onRaceChange($event.target.value)">
-            <template x-for="option in races" :key="option.name">
-              <option :value="option.name" x-text="option.name"></option>
-            </template>
-          </select>
-        </label>
-        <div>
-          <!-- <button @click="addParticipant1()">+</button> -->
-        </div>
+        <select x-model="selectedRace" @change="onRaceChange($event.target.value)" placeholder="гонка">
+          <template x-for="option in races" :key="option.name">
+            <option :value="option.name" x-text="option.name"></option>
+          </template>
+        </select>
+
         <button @click="addRace()">+</button>
-        <button @click="editRace()">&#128393;</button>
-
-
+        <button @click="editRace()">
+          <img src="assets/edit.svg" />
+        </button>
 
         <label>
-          Интервал
+          <!-- Интервал -->
           <input type="number" x-model="interval" required placeholder="Начальное отставание в с" :readonly="!editMode"
-            style="width: 5em" />
+            style="width: 2em" />
         </label>
 
-        <button @click="reset()">Сбросить</button>
+        <button @click="resetRace()"> <img src="assets/reset.svg" /></button>
       </div>
       <!--    <div>
         <input type="number" x-model="number" required placeholder="Номер" />
@@ -88,9 +86,10 @@
     </template>
 
     <template x-if="editMode">
-      <div>
-        <button @click="addParticipants()">+</button>
+      <div class="button-group">
+        <button @click="addParticipants()">+ добавить участников</button>
         <button @click="saveRace()">Сохранить</button>
+        <button @click="deleteRace()">удалить</button>
       </div>
   </div>
   </div>

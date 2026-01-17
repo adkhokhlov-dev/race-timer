@@ -118,6 +118,13 @@ function timer() {
     editRace: function () {
       this.editMode = true;
     },
+    deleteRace() {
+      if (confirm("Гонка будет удалена")) {
+        this.races = this.races.filter((v) => v.name !== this.selectedRace);
+        this.changeRace(this.races[0]);
+      }
+    },
+
     saveRace: function () {
       const race = this.races.find((v) => v.name === this.selectedRace);
       if (race) {
@@ -130,10 +137,10 @@ function timer() {
     },
 
     changeRace(race) {
-      this.selectedRace = race.name;
-      this.interval = race.interval;
-      this.laps = race.laps;
-      this.setParticipants(race.racers);
+      this.selectedRace = race?.name ?? null;
+      this.interval = race?.interval ?? DEFAULT_INTERVAL;
+      this.laps = race?.laps ?? [];
+      this.setParticipants(race?.racers ?? []);
     },
 
     setParticipants(participants) {
@@ -163,7 +170,6 @@ function timer() {
       const racers = res.split(/\s/).reduce((acc, v) => {
         const num = +v;
         if (isNaN(num) && acc.length) {
-          // name!
           acc[acc.length - 1].name += " " + v;
         } else {
           acc.push(new Racer(num));
@@ -174,8 +180,7 @@ function timer() {
       // console.log(participants);
       this.setParticipants([...this.participants, ...racers]);
     },
-    reset: function () {
-      // this.participants = this.participantsSorted = [];
+    resetRace: function () {
       this.laps = [];
       this.participants.forEach((p) => (p.laps = []));
       this.saveRace();
