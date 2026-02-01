@@ -45,29 +45,6 @@ function timer() {
           this.changeRace(this.races.find((v) => v.name === this.selectedRace));
         }, 1);
       }
-      // this.fetchRaces();
-      // this.participants = this.participantsSorted = [
-      //   // ["Балчугова", 4],
-      //   // ["Хохлова", 2],
-      //   // ["Шведова", 3],
-      //   // ["Загвоздин", 3],
-      //   // ["Хисматулин", 3],
-      //   // ["Фрол", 3],
-      //   // ["Барышников", 3],
-      //   // ["Богданов", 3],
-      //   // ["Строгалев", 3],
-      //   // ["Шведова", 3],
-      // ];
-      // .map(([name, id], i) => ({
-      //   id: id ?? i + 1,
-      //   name,
-      //   laps: [],
-      // }))
-      // .sort((p1, p2) => p1.id - p2.id);
-      // this.participants.push({
-      //   id: 77,
-      //   laps: [],
-      // });
     },
 
     onRaceChange: function (value) {
@@ -107,7 +84,7 @@ function timer() {
       }
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ races: this.races, selectedRace: this.selectedRace })
+        JSON.stringify({ races: this.races, selectedRace: this.selectedRace }),
       );
       if (endAction) this.editMode = false;
     },
@@ -123,6 +100,7 @@ function timer() {
     resetRace: function () {
       this.laps = [];
       this.participants.forEach((p) => (p.laps = []));
+      this.participantsSorted = this.participants;
       this.saveRace();
     },
 
@@ -162,7 +140,7 @@ function timer() {
       const lap = participant.laps.length;
 
       this.participantsSorted = [...this.participants]
-        .filter((v) => v.laps[lap - 1])
+        // .filter((v) => v.laps[lap - 1])
         .sort((p1, p2) => this.dif(p1, p2, lap - 1));
       console.log(JSON.parse(JSON.stringify(this.participantsSorted)));
 
@@ -202,9 +180,13 @@ function timer() {
       return participant.id * this.interval * 1000;
     },
     dif(p1, p2, lap) {
-      if (!p1.laps[lap] || !p2.laps[lap]) return -1;
-      const time1 = p1.laps[lap].time - this.startOffset(p1);
-      const time2 = p2.laps[lap].time - this.startOffset(p2);
+      // if (!p1.laps[lap] || !p2.laps[lap]) return -1;
+      const time1 = p1.laps[lap]?.time
+        ? p1.laps[lap].time - this.startOffset(p1)
+        : Number.MAX_SAFE_INTEGER - 1000_000 + this.startOffset(p1);
+      const time2 = p2.laps[lap]?.time
+        ? p2.laps[lap].time - this.startOffset(p2)
+        : Number.MAX_SAFE_INTEGER - 1000_000 + this.startOffset(p2);
       return time1 - time2;
     },
     formatTime(participant, time) {
@@ -236,7 +218,7 @@ class Race {
       json.name,
       json.interval,
       json.racers.map((v) => new Racer(v.id, v.name, v.laps)),
-      json.laps
+      json.laps,
     );
   }
 }
