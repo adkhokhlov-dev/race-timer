@@ -54,7 +54,7 @@ class Racer {
   }
 }
 
-interface Lap { time: number; position?: number; delays: string[] }
+interface Lap { time: number; position?: number; delays: { p: Participant, delay: string }[]; }
 
 interface Participant { id: number; name: string; laps: Lap[] }
 
@@ -63,6 +63,7 @@ type Json = Record<string, any>;
 
 export class Timer {
   editMode = false;
+  info?: Participant;
   interval = DEFAULT_INTERVAL;
   number: number = NaN;
   name = "";
@@ -139,6 +140,7 @@ export class Timer {
   resetRace() {
     this.laps = [];
     this.participants.forEach((p) => (p.laps = []));
+    this.participantsSorted = this.participants;
     this.saveRace();
   }
 
@@ -155,18 +157,26 @@ export class Timer {
   addParticipants() {
     const res = prompt("Список номеров и гонщиков");
     if (res) {
-      const racers = res.split(/\s/).reduce<Racer[]>((acc, v) => {
-        const num = +v;
-        if (isNaN(num) && acc.length) {
-          acc[acc.length - 1].name += " " + v;
-        } else {
-          acc.push(new Racer(num));
+      let racers: Racer[] = [];
+      if (res.includes('-')) {
+        const [start, end] = res.split('-').map(v => +v);
+        if (!isNaN(start) && !isNaN(end) && start < end) {
+          racers = new Array(end - start + 1).fill(null).map((_v, i) => new Racer(start + i))
         }
-        return acc;
-      }, []);
-      // const participants = racers.map((v) => v.toCortege());
-      // console.log(participants);
-      this.setParticipants([...this.participants, ...racers]);
+
+      } else
+        racers = res.split(/,\s|,|\s/).reduce<Racer[]>((acc, v) => {
+          const num = +v;
+          if (isNaN(num) && acc.length) {
+            acc[acc.length - 1].name += " " + v;
+          } else {
+            acc.push(new Racer(num));
+          }
+          return acc;
+        }, []);
+
+      const participantsFiltered = this.participants.filter(p => !racers.find(r => r.id === p.id));
+      this.setParticipants([...participantsFiltered, ...racers]);
       this.saveRace();
     }
 
@@ -179,6 +189,7 @@ export class Timer {
 
   check(id: number) {
     const participant = this.getById(id);
+    this.info = participant;
     if (!participant) return;
 
     participant.laps.push({ time: Date.now(), delays: [] });
@@ -207,11 +218,12 @@ export class Timer {
           : undefined;
 
         lap.delays = this.participantsSorted
-          // .slice(0, 3)
           .map<[Participant, number]>((p) => [p, this.dif(participant, p, currentLap - 1)])
           .filter(([, dif]) => dif > 0)
-          .filter((_v, i, arr) => i == 0 || i > arr.length - 3)
-          .map(([p, dif]) => this.formatTime(p, dif));
+          .filter((_v, i, arr) => i < 3 || i > arr.length - 3) // проигрыш первым трём и двум ближайшим
+          .map(([p, dif]) => ({ p, delay: this.formatTime(dif) }));
+
+        console.log(lap.delays)
       }
     }
   }
@@ -224,25 +236,29 @@ export class Timer {
   }
 
   startOffset(participant: Participant) {
-    console.log(participant.id, participant.id * this.interval);
+    // console.log(participant.id, participant.id * this.interval);
     return participant.id * this.interval * 1000;
   }
 
   dif(p1: Participant, p2: Participant, lap: number): number {
     // if (!p1.laps[lap] || !p2.laps[lap]) return -1;
-    const time1 = (p1.laps[lap]?.time ?? Number.MAX_SAFE_INTEGER) - this.startOffset(p1);
-    const time2 = (p2.laps[lap]?.time ?? Number.MAX_SAFE_INTEGER) - this.startOffset(p2);
+    const time1 = p1.laps[lap]?.time
+      ? p1.laps[lap].time - this.startOffset(p1)
+      : Number.MAX_SAFE_INTEGER - 1000_000 + this.startOffset(p1);
+    const time2 = p2.laps[lap]?.time
+      ? p2.laps[lap].time - this.startOffset(p2)
+      : Number.MAX_SAFE_INTEGER - 1000_000 + this.startOffset(p2);
     return time1 - time2;
   }
 
-  formatTime(participant: Participant, time: number) {
+  formatTime(time: number) {
     // return new Date(time + this.tzOffset).toLocaleTimeString();
     // const milliseconds = Math.floor(time / 10) % 100;
     const seconds = Math.floor(time / 1000) % 60;
     const minutes = Math.floor(time / 60_000);
 
     // return `+${addZero(minutes)}:${addZero(seconds)}.${milliseconds}`;
-    return `(${participant.id})+${addZero(minutes)}:${addZero(seconds)}`;
+    return `+${addZero(minutes)}:${addZero(seconds)}`;
 
     function addZero(number: number) {
       return number < 10 ? "0" + number : number;

@@ -6,23 +6,39 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>timer-ts</title>
-  <script type="module" crossorigin src="/assets/index-C2ymG8Xs.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BBunXHBO.css">
+  <script type="module" crossorigin src="/assets/index-CxgKVgbA.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DtoI2UgY.css">
 </head>
 
 <body>
   <div x-data="timer()" x-init="init()" class="app">
+    <template x-if="info">
+      <div @click="info=undefined" class="info row">
+        <div>
+          <b x-text="info.id"></b>
+          <span x-text="info.name"></span>
+        </div>
+        <template x-for="lap in info.laps">
+          <div :style="getColor(lap.position);">
+            <div>место:<span x-text="lap.position"></span></div>
+            <template x-for="(d, i) in lap.delays">
+              <div>
+                <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span> <span
+                  x-text="d.p.name"></span>)
+                <template x-if="i === 2">
+                  <hr />
+                </template>
+              </div>
+              <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+
     <div class="settings">
       <div>
-        <!-- <label>
-            Старт
-            <input
-              type="time"
-              x-model="start"
-              required
-              placeholder="Время старта"
-            /> </label
-          ><label> -->
 
         <select x-model="selectedRace" @change="onRaceChange($event.target.value)" placeholder="гонка">
           <template x-for="option in races" :key="option.name">
@@ -71,9 +87,12 @@
           <template x-for="lap in p.laps">
             <div :style="getColor(lap.position);">
               <div>место:<span x-text="lap.position"></span></div>
-              <template x-for="delay in lap.delays">
+              <template x-for="(d, i) in lap.delays">
                 <div>
-                  <!-- <span>отставание: </span> --><span x-text="delay"></span>
+                  <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span>)
+                  <template x-if="i === 2">
+                    <hr />
+                  </template>
                 </div>
                 <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
               </template>
@@ -92,7 +111,7 @@
 
     </div>
   </div>
-
+
 </body>
 <!-- 
 <body>

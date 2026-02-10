@@ -10,6 +10,31 @@
 
 <body>
   <div x-data="timer()" x-init="init()" class="app">
+    <template x-if="info">
+      <div @click="info=undefined" class="info row">
+        <div>
+          <b x-text="info.id"></b>
+          <span x-text="info.name"></span>
+        </div>
+        <template x-for="lap in info.laps">
+          <div :style="getColor(lap.position);">
+            <div>место:<span x-text="lap.position"></span></div>
+            <template x-for="(d, i) in lap.delays">
+              <div>
+                <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span> <span
+                  x-text="d.p.name"></span>)
+                <template x-if="i === 2">
+                  <hr />
+                </template>
+              </div>
+              <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+
+
     <div class="settings">
       <div>
 
@@ -60,9 +85,12 @@
           <template x-for="lap in p.laps">
             <div :style="getColor(lap.position);">
               <div>место:<span x-text="lap.position"></span></div>
-              <template x-for="delay in lap.delays">
+              <template x-for="(d, i) in lap.delays">
                 <div>
-                  <!-- <span>отставание: </span> --><span x-text="delay"></span>
+                  <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span>)
+                  <template x-if="i === 2">
+                    <hr />
+                  </template>
                 </div>
                 <!-- <div><span>отставание: </span><span x-text="delay"></span></div> -->
               </template>
