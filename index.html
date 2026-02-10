@@ -14,7 +14,7 @@
       <div @click="info=undefined" class="info row">
         <div>
           <b x-text="info.id"></b>
-          <span x-text="info.name"></span>
+          <div x-text="info.name"></div>
         </div>
         <template x-for="lap in info.laps">
           <div :style="getColor(lap.position);">

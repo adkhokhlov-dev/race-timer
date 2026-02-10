@@ -20,7 +20,8 @@
    font-size: 1.5rem;
  }
 
- .info {
+ .info.row {
+   display: flex;
    position: fixed;
    top: 0;
    left: 0;
