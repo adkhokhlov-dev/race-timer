@@ -12,15 +12,6 @@
   <div x-data="timer()" x-init="init()" class="app">
     <div class="settings">
       <div>
-        <!-- <label>
-            Старт
-            <input
-              type="time"
-              x-model="start"
-              required
-              placeholder="Время старта"
-            /> </label
-          ><label> -->
 
         <select x-model="selectedRace" @change="onRaceChange($event.target.value)" placeholder="гонка">
           <template x-for="option in races" :key="option.name">
