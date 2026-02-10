@@ -21,8 +21,8 @@
             <div>место:<span x-text="lap.position"></span></div>
             <template x-for="(d, i) in lap.delays">
               <div>
-                <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span> <span
-                  x-text="d.p.name"></span>)
+                <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.id"></span> <span
+                  x-text="d.name"></span>)
                 <template x-if="i === 2">
                   <hr />
                 </template>
@@ -87,7 +87,7 @@
               <div>место:<span x-text="lap.position"></span></div>
               <template x-for="(d, i) in lap.delays">
                 <div>
-                  <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.p.id"></span>)
+                  <!-- <span>отставание: </span> --><span x-text="d.delay"></span>(<span x-text="d.id"></span>)
                   <template x-if="i === 2">
                     <hr />
                   </template>

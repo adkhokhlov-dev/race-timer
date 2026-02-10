@@ -54,7 +54,7 @@ class Racer {
   }
 }
 
-interface Lap { time: number; position?: number; delays: { p: Participant, delay: string }[]; }
+interface Lap { time: number; position?: number; delays: { id: number, name: string, delay: string }[]; }
 
 interface Participant { id: number; name: string; laps: Lap[] }
 
@@ -221,7 +221,7 @@ export class Timer {
           .map<[Participant, number]>((p) => [p, this.dif(participant, p, currentLap - 1)])
           .filter(([, dif]) => dif > 0)
           .filter((_v, i, arr) => i < 3 || i > arr.length - 3) // проигрыш первым трём и двум ближайшим
-          .map(([p, dif]) => ({ p, delay: this.formatTime(dif) }));
+          .map(([p, dif]) => ({ id: p.id, name: p.name, delay: this.formatTime(dif) }));
 
         console.log(lap.delays)
       }
