@@ -109,11 +109,38 @@
      background-color: gainsboro;
    }
 
+   &.active {
+     /* background-color: lightblue; */
+     animation: pulse-color 1s infinite;
+   }
+
    >*:first-child {
      word-break: break-all;
    }
+
  }
+
 
  .button-group {
    margin-top: 16px;
+ }
+
+
+
+
+ @keyframes pulse-color {
+   0% {
+     background-color: lightblue;
+     /* Starting color */
+   }
+
+   50% {
+     background-color: #d5dee0;
+     /* Mid-point color */
+   }
+
+   100% {
+     background-color: lightblue;
+     /* Ending color (back to start) */
+   }
  }

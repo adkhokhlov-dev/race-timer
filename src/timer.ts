@@ -63,6 +63,7 @@ type Json = Record<string, any>;
 
 export class Timer {
   editMode = false;
+  active?: number;
   info?: Participant;
   interval = DEFAULT_INTERVAL;
   number: number = NaN;
@@ -188,6 +189,10 @@ export class Timer {
   }
 
   check(id: number) {
+    if (this.active !== id) {
+      this.active = id;
+      return;
+    }
     const participant = this.getById(id);
     this.info = participant;
     if (!participant) return;

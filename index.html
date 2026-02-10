@@ -73,7 +73,7 @@
       </div>
 
       <template x-for="p in participantsSorted" :key="p.id">
-        <div @click="check(p.id)" class="row">
+        <div @click="check(p.id)" class="row" :class="{'active': p.id == active}">
           <div>
             <template x-if="editMode">
               <button @click="deleteRacer(p.id)">-</button>
