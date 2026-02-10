@@ -198,10 +198,10 @@ export class Timer {
     this.participantsSorted = [...this.participants]
       // .filter((v) => v.laps[lap - 1])
       .sort((p1, p2) => this.dif(p1, p2, lap - 1));
-    console.log(JSON.parse(JSON.stringify(this.participantsSorted)));
+    // console.log(JSON.parse(JSON.stringify(this.participantsSorted)));
 
     this.updateParticipants(lap);
-    console.log(JSON.parse(JSON.stringify(this.participants)));
+    // console.log(JSON.parse(JSON.stringify(this.participants)));
 
     if (participant.laps.length > this.laps.length)
       this.laps.push(this.laps.length + 1);
@@ -223,7 +223,7 @@ export class Timer {
           .filter((_v, i, arr) => i < 3 || i > arr.length - 3) // проигрыш первым трём и двум ближайшим
           .map(([p, dif]) => ({ id: p.id, name: p.name, delay: this.formatTime(dif) }));
 
-        console.log(lap.delays)
+        // console.log(lap.delays)
       }
     }
   }
