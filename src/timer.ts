@@ -64,6 +64,7 @@ type Json = Record<string, any>;
 export class Timer {
   editMode = false;
   active?: number;
+  activated?: number;
   info?: Participant;
   interval = DEFAULT_INTERVAL;
   number: number = NaN;
@@ -188,11 +189,18 @@ export class Timer {
     this.saveRace();
   }
 
-  check(id: number) {
+  fixTime(id: number) {
     if (this.active !== id) {
       this.active = id;
+      this.activated = undefined;
       return;
     }
+    if (this.activated) {
+      this.activated = undefined;
+      return;
+    }
+    this.activated = id;
+
     const participant = this.getById(id);
     this.info = participant;
     if (!participant) return;
