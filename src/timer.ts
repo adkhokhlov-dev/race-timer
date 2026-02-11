@@ -220,6 +220,7 @@ export class Timer {
       this.laps.push(this.laps.length + 1);
 
     this.saveRace();
+    navigator.vibrate(100);
   }
 
   updateParticipants(currentLap: number) {
